@@ -9,11 +9,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # 读取配置文件
 class Config:
     def __init__(self):
-        if not os.path.exists(os.path.join(os.path.dirname(__file__), 'config.yaml')):
+        self.file_path = os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data'), 'config.yaml')
+        if not os.path.exists(self.file_path):
             self.creat_base_config()
             logging.info('请修改配置文件后重新运行')
             exit(0)
-        self.file_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
+
         # 通过读取环境变量获取或从config。yaml中获取
         self.namesilo_api_key = os.getenv('NAMESILO_API_KEY') or self.get_yaml_config('namesilo_api_key')
         self.admin_name = os.getenv('ADMIN_NAME') or self.get_yaml_config('admin_name')
@@ -56,10 +57,8 @@ class Config:
             with open(self.file_path, 'w') as f:
                 yaml.dump(base_config, f)
                 logging.info('创建配置文件成功')
-                exit(0)
         except IOError:
             logging.error('创建配置文件失败')
-            exit(1)
 
     def modify_config(self, key, value):
         try:

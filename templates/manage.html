@@ -55,9 +55,91 @@
           overflow: hidden; /* 隐藏超出部分 */
           text-overflow: ellipsis; /* 超出部分显示省略号 */
         }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
+            display: none; /* 默认隐藏 */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay.active {
+            display: flex; /* 显示遮罩层 */
+        }
+		.loading-wrap {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+
+		.balls {
+			width: 4em;
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.balls div {
+			width: 0.8em;
+			height: 0.8em;
+			border-radius: 50%;
+			background-color: #4b9e5f;
+		}
+
+		.balls div:nth-of-type(1) {
+			transform: translateX(-100%);
+			animation: left-swing 0.5s ease-in alternate infinite;
+		}
+
+		.balls div:nth-of-type(3) {
+			transform: translateX(-95%);
+			animation: right-swing 0.5s ease-out alternate infinite;
+		}
+
+		@keyframes left-swing {
+
+			50%,
+			100% {
+				transform: translateX(95%);
+			}
+		}
+
+		@keyframes right-swing {
+			50% {
+				transform: translateX(-95%);
+			}
+
+			100% {
+				transform: translateX(100%);
+			}
+		}
+
+		@media (prefers-color-scheme: dark) {
+			body {
+				background: #121212;
+			}
+		}
     </style>
 </head>
 <body>
+    <!-- 加载动画 -->
+    <div id="loading" class="overlay">
+        <div id="app">
+            <div class="loading-wrap">
+                <div class="balls">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
     <nav class="navbar navbar-light mb-3" style="background-color: #e3f2fd;">
         <a class="navbar-brand" href="#">
             <img src="https://blog.yserver.top/wp-content/uploads/2023/11/yserver-1.png" width="35" height="35" class="d-inline-block align-top" alt="">
@@ -284,7 +366,13 @@
                     "mx": MX
                 })
             };
-            window.location.reload();
+            $("#loading").addClass("active");
+
+            // 延迟5秒钟刷新页面
+            setTimeout(function() {
+                location.reload();
+            }, 7000);
+            //window.location.reload();
             console.log(data);
 
             $(`#${modalId}`).modal('hide');
@@ -348,6 +436,6 @@ $(document).ready(function() {
 <script type="text/javascript">
 setInterval(function() {
     $("#tables").load(location.href+" #tables>*","");
-}, 50000);
+}, 600000);
 </script>
 </html>

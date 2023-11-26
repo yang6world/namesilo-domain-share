@@ -2,3 +2,4 @@
 /api/conf/config.yaml
 /api/database/database.db
 /test.py
+/data/

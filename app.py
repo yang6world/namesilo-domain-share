@@ -74,6 +74,15 @@ def admin():
     username = oidc.user_getfield('email').split('@')[0]
     if username != config.admin_name:
         return redirect(url_for('manage'))
+    try:
+        data = json.loads(request.form.get('data'))
+        action = data['action']
+        print(data)
+
+        #action = User(oidc.user_getinfo(['pofile'])['name'], data)
+        #print(action.action())
+    except Exception as e:
+        pass
     return render_template('admin.html', data_dict=db.get_all_record(),
                            user_list=db.get_user(), domain_list=db.get_domain(),
                            user=username)

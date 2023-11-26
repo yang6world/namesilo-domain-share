@@ -39,4 +39,4 @@ def sync_db_domain_list():
 if __name__ == '__main__':
     sync_db_domain_record()
     sync_db_record()
-    #sync_db_domain_list()
+    sync_db_domain_list()
