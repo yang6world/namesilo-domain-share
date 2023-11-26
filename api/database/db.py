@@ -56,7 +56,6 @@ class Database:
         '''
         self.conn.execute(sql_domain_list)
         self.conn.commit()
-        self.conn.close()
 
     # 对域名列表进行操作
     def insert_domain_record(self, domain, record_id, host, type, value, ttl, distance):

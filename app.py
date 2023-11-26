@@ -1,3 +1,5 @@
+import os
+
 import flask
 from flask import Flask, flash, session, request, redirect, url_for
 from flask import render_template
@@ -12,10 +14,14 @@ app = Flask(__name__)
 config = config.Config()
 db = Database()
 
+# 初始化
+db.init_tables()
+config.init_oidc_json()
 
 app.config.update({
     'SECRET_KEY': config.secret_key,  # Replace with your own secret key
-    'OIDC_CLIENT_SECRETS': 'api/conf/client_secrets.json',  # Path to your OIDC client secrets file
+    'OIDC_CLIENT_SECRETS': f'{os.path.dirname(__file__)}/api/conf/client_secrets.json',
+    'OVERWRITE_REDIRECT_URI': f'{config.redirect_uri}/authorize',
     'OIDC_COOKIE_SECURE': True,
     'OIDC_SCOPES': ['openid', 'email', 'profile']  # Specify the scopes you need
 })
@@ -24,8 +30,6 @@ oidc = OpenIDConnect(app)
 CORS(app, resources=r'/*')
 
 
-# 初始化
-# db.init_tables()
 
 
 @app.route('/')
@@ -76,4 +80,4 @@ def admin():
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True, host='localhost')
+    app.run(port=5000, debug=True, host='0.0.0.0')

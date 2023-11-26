@@ -9,6 +9,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # 读取配置文件
 class Config:
     def __init__(self):
+        if not os.path.exists(os.path.join(os.path.dirname(__file__), 'config.yaml')):
+            self.creat_base_config()
+            logging.info('请修改配置文件后重新运行')
+            exit(0)
         self.file_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
         # 通过读取环境变量获取或从config。yaml中获取
         self.namesilo_api_key = os.getenv('NAMESILO_API_KEY') or self.get_yaml_config('namesilo_api_key')
@@ -17,7 +21,7 @@ class Config:
         # OAuth2.0
         self.client_id = os.getenv('CLIENT_ID') or self.get_yaml_config('client_id')
         self.client_secret = os.getenv('CLIENT_SECRET') or self.get_yaml_config('client_secret')
-        self.redirect_uri = os.getenv('REDIRECT_URI') or self.get_yaml_config('redirect_uri') +'/authr'
+        self.redirect_uri = os.getenv('REDIRECT_URI') or self.get_yaml_config('redirect_uri')
         self.token_url = os.getenv('TOKEN_URL') or self.get_yaml_config('token_url')
         self.user_url = os.getenv('USER_URL') or self.get_yaml_config('user_url')
         self.auth_url = os.getenv('AUTH_URL') or self.get_yaml_config('auth_url')
@@ -90,10 +94,8 @@ class Config:
             with open(file_path, 'w') as f:
                 json.dump(oidc_json, f)
                 logging.info('创建OIDC配置文件成功')
-                exit(0)
         except IOError:
             logging.error('创建OIDC配置文件失败')
-            exit(1)
 
 
 if __name__ == '__main__':
