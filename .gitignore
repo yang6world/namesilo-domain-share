@@ -1,0 +1,4 @@
+/api/conf/client_secrets.json
+/api/conf/config.yaml
+/api/database/database.db
+/test.py
