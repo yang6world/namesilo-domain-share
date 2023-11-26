@@ -1,6 +1,6 @@
-from database.db import Database
-from utils import namesilo
-import utils.xml as xml
+from api.database.db import Database
+from api.utils import namesilo
+from api.utils import xml
 
 import re
 
@@ -21,7 +21,6 @@ def sync_db_record():
     user_list = db.get_user()
     record_list = db.get_all_record()
     db.clear_table('record')
-    print(record_list)
     for user in user_list:
         for i, record in record_list.items():
             if re.match(".*" + user, record[1]):

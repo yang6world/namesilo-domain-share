@@ -22,7 +22,6 @@ class NamesiloApi:
         url = self.api_url + 'dnsListRecords?version=1&type=xml&key=' + self.api_key + '&domain=' + domain
         response = requests.get(url)
         logging.info("获取DNS列表成功")
-        print(response.text)
         return response.text
 
     def add_dns_record(self, domain, host, record_type, value, ttl=3600, distance=None):

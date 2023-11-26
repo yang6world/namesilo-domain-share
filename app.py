@@ -1,3 +1,4 @@
+import logging
 import os
 
 import flask
@@ -6,9 +7,11 @@ from flask import render_template
 from api.conf import config
 from flask_oidc import OpenIDConnect
 from api.database import Database
+import api.sync as sync
 from flask_cors import CORS
 import json
 from api.action import User
+from api.sync import sync_db_record
 
 app = Flask(__name__)
 config = config.Config()
@@ -17,6 +20,9 @@ db = Database()
 # 初始化
 db.init_tables()
 config.init_oidc_json()
+sync.sync_db_domain_record()
+sync.sync_db_record()
+sync.sync_db_domain_list()
 
 app.config.update({
     'SECRET_KEY': config.secret_key,  # Replace with your own secret key
@@ -40,9 +46,11 @@ def login():
         if username == config.admin_name:
             db.add_user(username, oidc.user_getinfo(['pofile'])['name'],
                         oidc.user_getfield('email'), 'admin')
+            sync_db_record()
         else:
             db.add_user(username, oidc.user_getinfo(['pofile'])['name'],
                         oidc.user_getfield('email'))
+            sync_db_record()
     if username != config.admin_name:
         return redirect(url_for('manage'))
     else:
@@ -55,13 +63,10 @@ def manage():  # put application's code here
         return redirect(url_for('login'))
     try:
         data = json.loads(request.form.get('data'))
-        action = data['action']
-        print(data)
-
         action = User(oidc.user_getinfo(['pofile'])['name'], data)
-        print(action.action())
+        logging.info(action.action())
     except Exception as e:
-        print(f"Error: {e}")
+        logging.error(e)
 
     return render_template('manage.html', data_dict=db.get_record(oidc.user_getinfo(['pofile'])['name']),
                            domain=oidc.user_getinfo(['pofile'])['name'], domain_list=db.get_domain(),

@@ -22,7 +22,6 @@ class User:
                     self.domain = domain
                     print(self.domain)
                 data['host'] = self.data['host'].split('.' + domain)[0]
-                print(self.data['host'])
         logging.info(self.data)
 
     def action(self):
@@ -33,7 +32,6 @@ class User:
                                        self.data['ttl'], self.data['mx'])
             status = xml.get_modify_status_xml(xml_s)
             record_id = xml.get_record_id_xml(xml_s)
-            print(status, record_id)
             if status == '300':
                 db.insert_domain_record(self.data['domain'], record_id, record_host, self.data['type'],
                                         self.data['value'], self.data['ttl'], self.data['mx'])
