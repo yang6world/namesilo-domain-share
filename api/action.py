@@ -20,7 +20,6 @@ class User:
 
                 if re.match(".*" + domain, self.data['host']):
                     self.domain = domain
-                    print(self.domain)
                 data['host'] = self.data['host'].split('.' + domain)[0]
         logging.info(self.data)
 

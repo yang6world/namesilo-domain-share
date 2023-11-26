@@ -36,20 +36,18 @@ oidc = OpenIDConnect(app)
 CORS(app, resources=r'/*')
 
 
-
-
 @app.route('/')
 @oidc.require_login
 def login():
-    username = oidc.user_getfield('email').split('@')[0]
+    username = session['oidc_auth_profile']['email'].split('@')[0]
     if username not in db.get_user():
         if username == config.admin_name:
-            db.add_user(username, oidc.user_getinfo(['pofile'])['name'],
-                        oidc.user_getfield('email'), 'admin')
+            db.add_user(username, session['oidc_auth_profile']['name'],
+                        session['oidc_auth_profile']['email'], 'admin')
             sync_db_record()
         else:
-            db.add_user(username, oidc.user_getinfo(['pofile'])['name'],
-                        oidc.user_getfield('email'))
+            db.add_user(username, session['oidc_auth_profile']['name'],
+                        session['oidc_auth_profile']['email'])
             sync_db_record()
     if username != config.admin_name:
         return redirect(url_for('manage'))
@@ -63,14 +61,14 @@ def manage():  # put application's code here
         return redirect(url_for('login'))
     try:
         data = json.loads(request.form.get('data'))
-        action = User(oidc.user_getinfo(['pofile'])['name'], data)
+        action = User(session['oidc_auth_profile']['name'], data)
         logging.info(action.action())
     except Exception as e:
         logging.error(e)
 
     return render_template('manage.html', data_dict=db.get_record(oidc.user_getinfo(['pofile'])['name']),
-                           domain=oidc.user_getinfo(['pofile'])['name'], domain_list=db.get_domain(),
-                           user=oidc.user_getfield('email').split('@')[0])
+                           domain=session['oidc_auth_profile']['name'], domain_list=db.get_domain(),
+                           user=session['oidc_auth_profile']['email'].split('@')[0])
 
 
 @app.route('/admin', methods=["GET", "POST"])
@@ -84,8 +82,8 @@ def admin():
         action = data['action']
         print(data)
 
-        #action = User(oidc.user_getinfo(['pofile'])['name'], data)
-        #print(action.action())
+        # action = User(oidc.user_getinfo(['pofile'])['name'], data)
+        # print(action.action())
     except Exception as e:
         pass
     return render_template('admin.html', data_dict=db.get_all_record(),
