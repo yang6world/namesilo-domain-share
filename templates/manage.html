@@ -369,11 +369,11 @@
             $("#loading").addClass("active");
 
             // 延迟5秒钟刷新页面
-            setTimeout(function() {
-                location.reload();
-            }, 7000);
+            //setTimeout(function() {
+            //    location.reload();
+            //}, 7000);
             //window.location.reload();
-            console.log(data);
+            //console.log(data);
 
             $(`#${modalId}`).modal('hide');
             $.ajax({
@@ -382,11 +382,10 @@
                 url: "/manage",
                 data: data,
                 success: function(result) {
-                    console.log(result)
-
+                    location.reload();
                  },
                 error: function (result) {
-                    console.log(result)
+                    console.log(result);
                 }
             });
 

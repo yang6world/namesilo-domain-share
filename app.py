@@ -2,7 +2,7 @@ import logging
 import os
 
 import flask
-from flask import Flask, flash, session, request, redirect, url_for
+from flask import Flask, session, request, redirect, url_for, jsonify
 from flask import render_template
 from api.conf import config
 from flask_oidc import OpenIDConnect
@@ -62,19 +62,18 @@ def manage():  # put application's code here
     try:
         data = json.loads(request.form.get('data'))
         action = User(session['oidc_auth_profile']['name'], data)
-        logging.info(action.action())
-    except Exception as e:
-        logging.error(e)
-
-    return render_template('manage.html', data_dict=db.get_record(oidc.user_getinfo(['pofile'])['name']),
-                           domain=session['oidc_auth_profile']['name'], domain_list=db.get_domain(),
-                           user=session['oidc_auth_profile']['email'].split('@')[0])
+        if action.action():
+            return jsonify({"success": "true"})
+    except:
+        return render_template('manage.html', data_dict=db.get_record(session['oidc_auth_profile']['name']),
+                               domain=session['oidc_auth_profile']['name'], domain_list=db.get_domain(),
+                               user=session['oidc_auth_profile']['email'].split('@')[0])
 
 
 @app.route('/admin', methods=["GET", "POST"])
 @oidc.require_login
 def admin():
-    username = oidc.user_getfield('email').split('@')[0]
+    username = session['oidc_auth_profile']['email'].split('@')[0]
     if username != config.admin_name:
         return redirect(url_for('manage'))
     try:

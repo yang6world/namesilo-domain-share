@@ -35,9 +35,11 @@ class User:
                 db.insert_domain_record(self.data['domain'], record_id, record_host, self.data['type'],
                                         self.data['value'], self.data['ttl'], self.data['mx'])
                 db.insert_record(record_id, self.username, record_host)
-                return '添加成功'
+                logging.info('添加成功')
+                return True
             else:
-                return '添加失败'
+                logging.info('添加失败')
+                return False
         if self.data['action'] == 'modify':
             xml_s = api.update_dns_record(self.domain, self.data['host'], self.record_id, self.data['type'],
                                           self.data['value'], self.data['ttl'], self.data['mx'])
@@ -46,16 +48,20 @@ class User:
             if status == '300':
                 db.modify_domain_record(self.data['value'], self.data['ttl'], self.data['mx'], record_id,
                                         self.record_id)
-                return '更新成功'
+                logging.info('更新成功')
+                return True
             else:
-                return '更新失败'
+                logging.info('更新失败')
+                return False
         if self.data['action'] == 'delete':
             status = xml.get_modify_status_xml(api.delete_dns_record(self.domain, self.record_id))
             if status == '300':
                 db.delete_domain_record(self.record_id)
-                return '删除成功'
+                logging.info('删除成功')
+                return True
             else:
-                return '删除失败'
+                logging.info('删除失败')
+                return False
 
 class Admin:
     def __init__(self, user, data):
