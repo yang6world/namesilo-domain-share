@@ -8,123 +8,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-    <link rel="icon" type="image/svg+xml" href="https://blog.yserver.top/wp-content/uploads/2023/11/yserver-1.png" />
+    <link rel="icon" type="image/svg+xml" href="{{url_for('static', filename='img/yserver.png')}}" />
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <style>
         /* Custom styles */
-        .navbar-brand img {
-            width: 37px;
-            height: 37px;
-            margin-right: 5px;
-        }
 
-        .btn-circle {
-            width: 30px;
-            height: 30px;
-            text-align: center;
-            padding: 6px 0;
-            font-size: 12px;
-            line-height: 1.428571429;
-            border-radius: 15px;
-            position: relative;
-        }
-
-        .btn-circle.btn-lg {
-            width: 37px;
-            height: 37px;
-            padding: 8px 14px;
-            font-size: 18px;
-            line-height: 1.33;
-            border-radius: 50px;
-        }
-
-        button span {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .truncate-cell {
-          max-width: 100px; /* 设置单元格最大宽度 */
-          white-space: nowrap; /* 防止换行 */
-          overflow: hidden; /* 隐藏超出部分 */
-          text-overflow: ellipsis; /* 超出部分显示省略号 */
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色背景 */
-            display: none; /* 默认隐藏 */
-            justify-content: center;
-            align-items: center;
-        }
-
-        .overlay.active {
-            display: flex; /* 显示遮罩层 */
-        }
-		.loading-wrap {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-		}
-
-		.balls {
-			width: 4em;
-			display: flex;
-			flex-flow: row nowrap;
-			align-items: center;
-			justify-content: space-between;
-		}
-
-		.balls div {
-			width: 0.8em;
-			height: 0.8em;
-			border-radius: 50%;
-			background-color: #4b9e5f;
-		}
-
-		.balls div:nth-of-type(1) {
-			transform: translateX(-100%);
-			animation: left-swing 0.5s ease-in alternate infinite;
-		}
-
-		.balls div:nth-of-type(3) {
-			transform: translateX(-95%);
-			animation: right-swing 0.5s ease-out alternate infinite;
-		}
-
-		@keyframes left-swing {
-
-			50%,
-			100% {
-				transform: translateX(95%);
-			}
-		}
-
-		@keyframes right-swing {
-			50% {
-				transform: translateX(-95%);
-			}
-
-			100% {
-				transform: translateX(100%);
-			}
-		}
-
-		@media (prefers-color-scheme: dark) {
-			body {
-				background: #121212;
-			}
-		}
     </style>
 </head>
 <body>
@@ -333,68 +226,6 @@
 </body>
 <script>
     $(document).ready(function() {
-        $('#submitRecord').on('click', function() {
-            handleButtonClick('addRecord','add');
-        });
-
-        // 修改记录按钮点击事件处理
-        $('#submitModifyRecord').on('click', function() {
-            handleButtonClick('modifyRecord','modify');
-        });
-
-        $('#submitDeleteRecord').on('click', function() {
-            handleButtonClick('deleteRecord','delete');
-        });
-
-        // 通用的处理函数，接受不同的模态框标识
-        function handleButtonClick(modalId,action) {
-            const domain = $(`#${modalId} #domain`).val();
-            const host = $(`#${modalId} #host`).val();
-            const type = $(`#${modalId} #inputGroupSelect01`).val();
-            const recordNum = $(`#${modalId} #recordNum`).val();
-            const TTL = $(`#${modalId} #TTL`).val();
-            const MX = $(`#${modalId} #MX`).val();
-
-            const data = {
-                data: JSON.stringify({
-                    "action": action,
-                    "domain": domain,
-                    "host": host,
-                    "type": type,
-                    "value": recordNum,
-                    "ttl": TTL,
-                    "mx": MX
-                })
-            };
-            $("#loading").addClass("active");
-
-            // 延迟5秒钟刷新页面
-            //setTimeout(function() {
-            //    location.reload();
-            //}, 7000);
-            //window.location.reload();
-            //console.log(data);
-
-            $(`#${modalId}`).modal('hide');
-            $.ajax({
-                type: "POST",
-                dataType: "json",
-                url: "/manage",
-                data: data,
-                success: function(result) {
-                    location.reload();
-                 },
-                error: function (result) {
-                    console.log(result);
-                }
-            });
-
-
-        }
-    });
-</script>
-<script>
-$(document).ready(function() {
     $('#modifyRecord, #deleteRecord').on('show.bs.modal', function() {
         $(this).find('#selectHost').on('change', function() {
             const selectedHost = $(this).val();
@@ -431,10 +262,7 @@ $(document).ready(function() {
 
 });
 </script>
-
 <script type="text/javascript">
-setInterval(function() {
-    $("#tables").load(location.href+" #tables>*","");
-}, 600000);
+
 </script>
 </html>

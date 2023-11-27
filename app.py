@@ -13,7 +13,7 @@ import json
 from api.action import User
 from api.sync import sync_db_record
 
-app = Flask(__name__)
+app = Flask(import_name=__name__, template_folder='templates', static_folder='static')
 config = config.Config()
 db = Database()
 
