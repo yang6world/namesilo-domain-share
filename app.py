@@ -10,7 +10,7 @@ from api.database import Database
 import api.sync as sync
 from flask_cors import CORS
 import json
-from api.action import User
+from api.action import User, Admin
 from api.sync import sync_db_record
 
 app = Flask(import_name=__name__, template_folder='templates', static_folder='static')
@@ -61,13 +61,13 @@ def manage():  # put application's code here
         return redirect(url_for('login'))
     try:
         data = json.loads(request.form.get('data'))
-        action = User(session['oidc_auth_profile']['name'], data)
-        if action.action():
+        action = User(session['oidc_auth_profile']['email'].split('@')[0], data)
+        status=action.action()
+        if status:
             return jsonify({"success": "true"})
     except:
         return render_template('manage.html', data_dict=db.get_record(session['oidc_auth_profile']['name']),
-                               domain=session['oidc_auth_profile']['name'], domain_list=db.get_domain(),
-                               user=session['oidc_auth_profile']['email'].split('@')[0])
+                               domain_list=db.get_domain(), user=session['oidc_auth_profile']['email'].split('@')[0])
 
 
 @app.route('/admin', methods=["GET", "POST"])
@@ -78,8 +78,10 @@ def admin():
         return redirect(url_for('manage'))
     try:
         data = json.loads(request.form.get('data'))
-        action = data['action']
-        print(data)
+        action = Admin(session['oidc_auth_profile']['email'].split('@')[0], data)
+        status=action.action()
+        if status:
+            return jsonify({"success": "true"})
 
         # action = User(oidc.user_getinfo(['pofile'])['name'], data)
         # print(action.action())
