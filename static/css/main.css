@@ -16,12 +16,17 @@
 }
 
 .btn-circle.btn-lg {
-    width: 37px;
-    height: 37px;
+    width: 39px;
+    height: 39px;
     padding: 8px 14px;
     font-size: 18px;
     line-height: 1.33;
     border-radius: 50px;
+}
+.btn-circle.btn-lg.btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border-color: #17a2b8;
 }
 
 button span {
@@ -124,7 +129,7 @@ body {
   width: 50px;
   background-color: #f1f1f1;
   position: fixed;
-  top: 60px; /* 与导航栏底部对齐 */
+  top: 65px; /* 与导航栏底部对齐 */
   height: calc(100% - 60px); /* 调整侧边栏高度以适应屏幕剩余空间 */
   overflow: auto;
   z-index: 999;

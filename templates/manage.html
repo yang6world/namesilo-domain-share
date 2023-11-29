@@ -9,10 +9,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
     <link rel="icon" type="image/svg+xml" href="{{url_for('static', filename='img/yserver.png')}}" />
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <style>
@@ -34,23 +34,25 @@
         </div>
     </div>
     <nav class="navbar navbar-light mb-3" style="background-color: #e3f2fd;">
+        <div class="container-fluid">
         <a class="navbar-brand" href="#">
             <img src="https://blog.yserver.top/wp-content/uploads/2023/11/yserver-1.png" width="35" height="35" class="d-inline-block align-top" alt="">
             域名管理
         </a>
         <button type="button" class="btn btn-info btn-circle btn-lg"><span>{{ user }}</span></button>
+        </div>
     </nav>
     <div class="container">
 
 
-        <div class="text-right mb-3">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addRecord">
+        <div class="text-end mb-3">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target="#addRecord">
                 添加记录
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyRecord">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target="#modifyRecord">
                 修改记录
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteRecord">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-target="#deleteRecord">
                 删除记录
             </button>
         </div>
@@ -95,7 +97,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addRecord">添加记录</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -107,7 +109,7 @@
                       <div class="input-group-append">
                         <span class="input-group-text">.{{ user }}.</span>
                       </div>
-                      <select class="custom-select" id="domain">
+                      <select class="form-select" id="domain">
                         <option selected>选择域名</option>
                         {% for i, domain in domain_list.items() %}
                         <option value="{{ domain }}">{{ domain }}</option>
@@ -115,7 +117,7 @@
                     </select>
                     </div>
                     <div class="input-group mb-3">
-                      <select class="custom-select" id="inputGroupSelect01">
+                      <select class="form-select" id="inputGroupSelect01">
                         <option selected>选择类型</option>
                         <option value="A">A</option>
                         <option value="CNAME">CNAME</option>
@@ -136,7 +138,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="submitRecord">添加</button>
                 </div>
             </div>
@@ -148,7 +150,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modifyRecord">更改记录</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -159,7 +161,7 @@
                       <input type="text" class="form-control" id="host" aria-label="Host" aria-describedby="basic-addon2">
                     </div>
                     <div class="input-group mb-3">
-                      <select class="custom-select" id="selectHost">
+                      <select class="form-select" id="selectHost">
                         <option selected>选择记录</option>
                         {% for k, v in data_dict.items() %}
                         <option value="{{ v[0] }}">{{ v[1] }}</option>
@@ -180,7 +182,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="submitModifyRecord">修改</button>
                 </div>
             </div>
@@ -193,7 +195,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteRecord">删除记录</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -204,7 +206,7 @@
                       <input type="text" class="form-control" id="host" aria-label="Host" aria-describedby="basic-addon2">
                     </div>
                     <div class="input-group mb-3">
-                      <select class="custom-select" id="selectHost">
+                      <select class="form-select" id="selectHost">
                         <option selected>选择记录</option>
                         {% for k, v in data_dict.items() %}
                         <option value="{{ v[0] }}">{{ v[1] }}</option>
@@ -217,7 +219,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                     <button type="button" class="btn btn-primary" id="submitDeleteRecord">删除</button>
                 </div>
             </div>
