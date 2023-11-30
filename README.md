@@ -1,6 +1,7 @@
 # Namesilo-Domain-Share
 ## 介绍
-本项目可用用于在NameSilo域名注册商上购买域名后通过调用NameSiloAPI实现域名共享,该项目仅支持OIDC认证，可配合原有的认证系统使用
+本项目可用用于在NameSilo域名注册商上购买域名后通过调用NameSiloAPI
+实现域名共享,该项目仅支持OIDC认证，可配合原有的认证系统使用
 ## 使用方法
 ### 1.获取APIKEY
 在[NameSilo](https://www.namesilo.com/)上获取APIKEY

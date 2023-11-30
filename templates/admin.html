@@ -127,7 +127,7 @@
                     <input type="text" class="form-control" placeholder="主机记录" id="host" aria-label="RecordHost"
                            aria-describedby="basic-addon2">
                     <select class="form-select" id="domain">
-                        <option selected>选择域名</option>
+                        <option value="" selected>选择域名</option>
                         {% for i, domain in domain_list.items() %}
                             <option value="{{ domain }}">{{ domain }}</option>
                         {% endfor %}
@@ -135,7 +135,7 @@
                 </div>
                 <div class="input-group mb-3">
                     <select class="form-select" id="inputGroupSelect01">
-                        <option selected>选择类型</option>
+                        <option value="" selected>选择类型</option>
                         <option value="A">A</option>
                         <option value="CNAME">CNAME</option>
                         <option value="MX">MX</option>
@@ -182,7 +182,7 @@
                 </div>
                 <div class="input-group mb-3">
                     <select class="form-select" id="selectHost">
-                        <option selected>选择记录</option>
+                        <option value="" selected>选择记录</option>
                         {% for k, v in data_dict.items() %}
                             <option value="{{ v[0] }}">{{ v[1] }}</option>
                         {% endfor %}
@@ -258,6 +258,17 @@
 <div class="container" id="settingPage" hidden="hidden">
     <p>hello world--setting</p>
 </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastBody">
+            </div>
+        </div>
+    </div>
 
 </body>
 <script>

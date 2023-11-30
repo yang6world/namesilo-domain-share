@@ -59,13 +59,14 @@ def login():
 def manage():  # put application's code here
     if not oidc.user_loggedin:
         return redirect(url_for('login'))
-    try:
+    if request.method == 'POST':
         data = json.loads(request.form.get('data'))
         action = User(session['oidc_auth_profile']['email'].split('@')[0], data)
-        status=action.action()
-        if status:
-            return jsonify({"success": "true"})
-    except:
+        status = action.action()
+        info = dict()
+        info['status'] = status
+        return jsonify(info)
+    else:
         return render_template('manage.html', data_dict=db.get_record(session['oidc_auth_profile']['name']),
                                domain_list=db.get_domain(), user=session['oidc_auth_profile']['email'].split('@')[0])
 
@@ -76,20 +77,18 @@ def admin():
     username = session['oidc_auth_profile']['email'].split('@')[0]
     if username != config.admin_name:
         return redirect(url_for('manage'))
-    try:
+    if request.method == 'POST':
         data = json.loads(request.form.get('data'))
         action = Admin(session['oidc_auth_profile']['email'].split('@')[0], data)
-        status=action.action()
-        if status:
-            return jsonify({"success": "true"})
-
-        # action = User(oidc.user_getinfo(['pofile'])['name'], data)
-        # print(action.action())
-    except Exception as e:
-        pass
-    return render_template('admin.html', data_dict=db.get_all_record(),
-                           user_list=db.get_user(), domain_list=db.get_domain(),
-                           user=username)
+        status = action.action()
+        print(status)
+        info = dict()
+        info['status'] = status
+        return jsonify(info)
+    else:
+        return render_template('admin.html', data_dict=db.get_all_record(),
+                               user_list=db.get_user(), domain_list=db.get_domain(),
+                               user=username)
 
 
 if __name__ == '__main__':

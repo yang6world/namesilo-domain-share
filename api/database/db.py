@@ -1,7 +1,8 @@
 import sqlite3
 import os
 
-file_path = os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data'), 'database.db')
+file_path = os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data'),
+                         'database.db')
 
 
 class Database:
@@ -138,6 +139,15 @@ class Database:
         for i, record in enumerate(record_list, 1):
             data_dist[i] = record
         return data_dist
+
+    def get_record_by_domain(self, domain):
+        sql = '''
+        SELECT host, type FROM domain_record WHERE host = ?
+        '''
+        cursor = self.conn.execute(sql, (domain,))
+        record_list = cursor.fetchall()
+        data_list = []
+        return record_list
 
     # 删除用户-域名关系并清除记录
     def delete_domain_record(self, record_id):

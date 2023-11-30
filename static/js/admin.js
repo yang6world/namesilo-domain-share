@@ -40,10 +40,26 @@ $(document).ready(function () {
             url: "/admin",
             data: data,
             success: function (result) {
-                location.reload();
+                $("#loading").removeClass("active");
+                var toast = new bootstrap.Toast(document.getElementById('toast'));
+                if (result.status == 200) {
+                    location.reload();
+                }
+                if (result.status == 400) {
+                    document.getElementById("toastTitle").innerHTML = "警告";
+                    document.getElementById("toastBody").innerHTML = "操作失败,请检查是否有重复记录,或输入参数";
+                }
+                else {
+                    document.getElementById("toastTitle").innerHTML = "警告";
+                    document.getElementById("toastBody").innerHTML = "未知错误";
+                }
+                toast.show();
             },
             error: function (result) {
                 console.log(result);
+                $("#loading").removeClass("active");
+                document.getElementById("toastTitle").innerHTML="警告";
+                document.getElementById("toastBody").innerHTML="操作失败";
             }
         });
 
