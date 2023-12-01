@@ -3,15 +3,17 @@ import logging
 from api.database import Database
 from api.utils import namesilo
 from api.utils import xml
+from api.sync import sync_db_record, sync_db_domain_record, sync_db_domain_list
+from api.conf import config
 import re
 
 db = Database()
 api = namesilo.NamesiloApi()
+config = config.Config()
 
 
 # 检查是否符合域名记录规范
 def check_repeat_domain(host, record_type):
-    print(host, record_type)
     if re.search(r'[^a-z0-9\-\_\.\@]', host):
         logging.info('输入参数错误')
         return False
@@ -22,15 +24,15 @@ def check_repeat_domain(host, record_type):
     return True
 
 
+
 class User:
     def __init__(self, username, data):
         self.username = username
         self.data = data
         self.domain_list = xml.get_domain_list_xml(api.get_domain_list())
         for domain in self.domain_list:
-            if self.data['action'] != 'add':
-                self.record_id = db.get_domain_id(self.data['host'], self.data['type'])
-
+            if self.data['action'] == 'modify' or self.data['action'] == 'delete' or self.data['action'] == 'deliverDomain':
+                self.record_id = self.data['record_id']
                 if re.match(".*" + domain, self.data['host']):
                     self.domain = domain
                 data['host'] = self.data['host'].split('.' + domain)[0]
@@ -99,6 +101,14 @@ class Admin(User):
             return self.modify_record()
         elif self.data['action'] == 'delete':
             return self.delete_record()
+        elif self.data['action'] == 'modifyUser':
+            return self.change_user_status()
+        elif self.data['action'] == 'deliverDomain':
+            return self.set_record_owner()
+        elif self.data['action'] == 'modify_setting':
+            return self.modify_setting()
+        elif self.data['action'] == 'sync_all':
+            return self.sync_all()
 
     def add_record(self):
         record_host = self.data['host'] + '.' + self.data['domain']
@@ -119,6 +129,28 @@ class Admin(User):
             logging.info('添加失败')
             return status
 
+    def change_user_status(self):
+        db.change_user_status(self.data['user'], self.data['userStatus'])
+        logging.info('修改成功')
+        return '200'
+
+    def set_record_owner(self):
+        db.set_record_owner(self.record_id, self.data['user'])
+        logging.info('修改成功')
+        return '200'
+
+    def modify_setting(self):
+        config.modify_config(self.data)
+        logging.info('修改成功')
+        return '200'
+
+    def sync_all(self):
+        sync_db_domain_list()
+        sync_db_domain_record()
+        sync_db_record()
+        logging.info('同步成功')
+        return '200'
+
 
 if __name__ == '__main__':
-    check_repeat_domain('', 'A')
+    pass

@@ -18,7 +18,8 @@ class Database:
             username VARCHAR(64) NOT NULL,
             email VARCHAR(64) NOT NULL,
             role VARCHAR(64) NOT NULL DEFAULT 'user',
-            last_login_time DATETIME 
+            last_login_time DATETIME,
+            status VARCHAR(64) NOT NULL DEFAULT 'enable' 
         )
         '''
         self.conn.execute(sql_user)
@@ -40,11 +41,12 @@ class Database:
         sql_record = '''
         CREATE TABLE IF NOT EXISTS record
         (
-            record_id VARCHAR(64),
+            record_id VARCHAR(64) UNIQUE,
             id VARCHAR(64),
             host VARCHAR(64),
+            add_user VARCHAR(64) DEFAULT 'system',
             record_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (record_id) REFERENCES domain_record(record_id) ON DELETE CASCADE
+            FOREIGN KEY (record_id) REFERENCES domain_record(record_id) ON DELETE CASCADE ON UPDATE CASCADE
         )
         '''
         self.conn.execute(sql_record)
@@ -66,13 +68,6 @@ class Database:
         self.conn.execute(sql, (domain, record_id, host, type, value, ttl, distance))
         self.conn.commit()
 
-    def get_domain_id(self, host, type):
-        sql = '''
-        SELECT record_id FROM domain_record WHERE host = ? AND type = ?
-        '''
-        cursor = self.conn.execute(sql, (host, type))
-        record_id = cursor.fetchone()[0]
-        return record_id
 
     def modify_domain_record(self, value, ttl, distance, record_id, old_record_id):
         sql = '''
@@ -96,6 +91,13 @@ class Database:
         self.conn.execute(sql, (id, username, email, role))
         self.conn.commit()
 
+    def record_login_time(self, id):
+        sql = '''
+        UPDATE user SET last_login_time = CURRENT_TIMESTAMP WHERE id = ?
+        '''
+        self.conn.execute(sql, (id,))
+        self.conn.commit()
+
     def get_user(self):
         sql = '''
         SELECT id FROM user 
@@ -106,6 +108,36 @@ class Database:
         for user in user_lists:
             user_list.append(user[0])
         return user_list
+
+    def change_user_status(self, id, status):
+        sql = '''
+        UPDATE user SET status = ? WHERE id = ?
+        '''
+        self.conn.execute(sql, (status, id))
+        self.conn.commit()
+
+    def get_all_user(self):
+        sql = '''
+        SELECT id, username, email, role, last_login_time, status FROM user
+        '''
+        cursor = self.conn.execute(sql)
+        user_lists = cursor.fetchall()
+        user_dict = {}
+        for i, user in enumerate(user_lists, 1):
+            user_dict[i] = user
+        return user_dict
+
+    def get_disabled_user(self):
+        sql = '''
+        SELECT id FROM user WHERE status = 'disable'
+        '''
+        cursor = self.conn.execute(sql)
+        user_lists = cursor.fetchall()
+        user_list = []
+        for user in user_lists:
+            user_list.append(user[0])
+        return user_list
+
 
     # 对域名-用户关系表进行操作
     def insert_record(self, record_id, id, host):
@@ -140,6 +172,18 @@ class Database:
             data_dist[i] = record
         return data_dist
 
+    def get_record_domain(self):
+        sql = '''
+        SELECT host
+        FROM record
+        '''
+        cursor = self.conn.execute(sql)
+        record_list = cursor.fetchall()
+        data_list = []
+        for record in record_list:
+            data_list.append(record[0])
+        return data_list
+
     def get_record_by_domain(self, domain):
         sql = '''
         SELECT host, type FROM domain_record WHERE host = ?
@@ -148,6 +192,24 @@ class Database:
         record_list = cursor.fetchall()
         data_list = []
         return record_list
+
+    def get_admin_record(self):
+        sql = '''
+        SELECT host FROM record WHERE add_user = 'admin'
+        '''
+        cursor = self.conn.execute(sql)
+        record_list = cursor.fetchall()
+        data_list = []
+        for record in record_list:
+            data_list.append(record[0])
+        return data_list
+
+    def set_record_owner(self, record_id, id, add_user='admin'):
+        sql = '''
+        UPDATE record SET id = ?, add_user = ? WHERE record_id = ?
+        '''
+        self.conn.execute(sql, (id, add_user, record_id))
+        self.conn.commit()
 
     # 删除用户-域名关系并清除记录
     def delete_domain_record(self, record_id):
@@ -183,5 +245,5 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    db.init_tables()
+    db.set_record_owner('e3c1482d5ead908bd6155a143fc0ab33', 'yzr')
     # print(db.get_domain_id('blog.yserver.top', 'A'))

@@ -16,6 +16,7 @@ $(document).ready(function () {
     function handleButtonClick(modalId, action) {
         const domain = $(`#${modalId} #domain`).val();
         const host = $(`#${modalId} #host`).val();
+        const record_id = $(`#${modalId} #selectHost`).val();
         const type = $(`#${modalId} #inputGroupSelect01`).val();
         const recordNum = $(`#${modalId} #recordNum`).val();
         const TTL = $(`#${modalId} #TTL`).val();
@@ -25,6 +26,7 @@ $(document).ready(function () {
             data: JSON.stringify({
                 "action": action,
                 "domain": domain,
+                "record_id": record_id,
                 "host": host,
                 "type": type,
                 "value": recordNum,

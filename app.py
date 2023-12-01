@@ -7,7 +7,7 @@ from flask import render_template
 from api.conf import config
 from flask_oidc import OpenIDConnect
 from api.database import Database
-import api.sync as sync
+from api.sync import sync_db_record, sync_db_domain_record, sync_db_domain_list
 from flask_cors import CORS
 import json
 from api.action import User, Admin
@@ -20,9 +20,9 @@ db = Database()
 # 初始化
 db.init_tables()
 config.init_oidc_json()
-sync.sync_db_domain_record()
-sync.sync_db_record()
-sync.sync_db_domain_list()
+sync_db_domain_record()
+sync_db_record()
+sync_db_domain_list()
 
 app.config.update({
     'SECRET_KEY': config.secret_key,  # Replace with your own secret key
@@ -40,6 +40,8 @@ CORS(app, resources=r'/*')
 @oidc.require_login
 def login():
     username = session['oidc_auth_profile']['email'].split('@')[0]
+    if username in db.get_disabled_user():
+        return "您的账户已被禁用，请联系管理员"
     if username not in db.get_user():
         if username == config.admin_name:
             db.add_user(username, session['oidc_auth_profile']['name'],
@@ -49,6 +51,7 @@ def login():
             db.add_user(username, session['oidc_auth_profile']['name'],
                         session['oidc_auth_profile']['email'])
             sync_db_record()
+    db.record_login_time(username)
     if username != config.admin_name:
         return redirect(url_for('manage'))
     else:
@@ -81,14 +84,13 @@ def admin():
         data = json.loads(request.form.get('data'))
         action = Admin(session['oidc_auth_profile']['email'].split('@')[0], data)
         status = action.action()
-        print(status)
         info = dict()
         info['status'] = status
         return jsonify(info)
     else:
         return render_template('admin.html', data_dict=db.get_all_record(),
                                user_list=db.get_user(), domain_list=db.get_domain(),
-                               user=username)
+                               user=username, user_dict=db.get_all_user(), setting=config.get_all_setting())
 
 
 if __name__ == '__main__':

@@ -65,18 +65,20 @@
 
 
     <div class="text-end mb-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecord">
+        <button type="button" id="button01" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecord">
             添加记录
         </button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyRecord">
+        <button type="button" id="button02" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#modifyRecord">
             修改记录
         </button>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteRecord">
+        <button type="button" id="button03" class="btn btn-primary" data-bs-toggle="modal"
+                data-bs-target="#deleteRecord">
             删除记录
         </button>
     </div>
 
-    <div id="tables">
+    <div id="recordTables">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -103,12 +105,86 @@
         </table>
     </div>
 
+    <div id="userTables" hidden="hidden">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th class="truncate-cell">用户名</th>
+                <th class="truncate-cell">邮箱</th>
+                <th class="truncate-cell">身份</th>
+                <th class="truncate-cell">最近登录</th>
+                <th class="truncate-cell">状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for k, v in user_dict.items() %}
+                <tr>
+                    <td class="truncate-cell">{{ v[1] }}</td>
+                    <td class="truncate-cell">{{ v[2] }}</td>
+                    <td class="truncate-cell">{{ v[3] }}</td>
+                    <td class="truncate-cell">{{ v[4] }}</td>
+                    <td class="truncate-cell">{{ v[5] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form id="setting" hidden="hidden">
+        <div class="mb-3">
+            <label for="adminUser" class="form-label">管理员用户</label>
+            <input type="text" class="form-control" id="adminUser" readonly value="{{ setting['admin_name'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="namesilo_api_key" class="form-label">NamesiloApi</label>
+            <input type="text" class="form-control" id="namesilo_api_key" value="{{ setting['namesilo_api_key'] }}">
+        </div>
+        <label for="oAuth2" class="form-label">oAuth2.0设置</label>
+        <div class="mb-3" id="oAuth2">
+            <label for="client_id" class="form-label">NamesiloApi</label>
+            <input type="text" class="form-control" id="client_id" value="{{ setting['client_id'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="auth_url" class="form-label">auth_url</label>
+            <input type="text" class="form-control" id="auth_url" value="{{ setting['auth_url'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="token_url" class="form-label">token_url</label>
+            <input type="text" class="form-control" id="token_url" value="{{ setting['token_url'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="user_url" class="form-label">user_url</label>
+            <input type="text" class="form-control" id="user_url" value="{{ setting['user_url'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="issuer" class="form-label">issuer</label>
+            <input type="text" class="form-control" id="issuer" value="{{ setting['issuer'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="issuer" class="form-label">NamesiloApi</label>
+            <input type="text" class="form-control" id="issuer" value="{{ setting['issuer'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="secret_key" class="form-label">secret_key</label>
+            <input type="text" class="form-control" id="secret_key" value="{{ setting['secret_key'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="redirect_uri" class="form-label">redirect_uri</label>
+            <input type="text" class="form-control" id="redirect_uri" value="{{ setting['redirect_uri'] }}">
+        </div>
+        <div class="mb-3">
+            <label for="log_level" class="form-label">log_level</label>
+            <input type="text" class="form-control" id="log_level" value="{{ setting['log_level'] }}">
+        </div>
+        <button type="button" id="saveSetting" class="btn btn-primary">保存</button>
+        <button type="button" id="syncData" class="btn btn-primary">同步官网数据</button>
+    </form>
     {% if status == "error" %}
         <div class="alert alert-danger" role="alert">
             操作失败！
         </div>
     {% endif %}
 </div>
+
 
 <!-- 添加 -->
 <div class="modal fade" id="addRecord" tabindex="-1" role="dialog" aria-labelledby="addRecord" aria-hidden="true">
@@ -169,7 +245,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modifyRecord">更改记录</h5>
+                <h5 class="modal-title" id="modifyRecordTitle">更改记录</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -192,22 +268,31 @@
                     <input type="text" class="form-control" id="inputGroupSelect01" value="" aria-label="Record Type"
                            aria-describedby="basic-addon2" readonly>
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="recordText">
                     <input type="text" class="form-control" placeholder="记录值" id="recordNum"
                            aria-label="Record Number" aria-describedby="basic-addon2">
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="ttlText">
                     <input type="text" class="form-control" placeholder="TTL" value="3600" id="TTL" aria-label="TTL"
                            aria-describedby="basic-addon2">
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="mxText">
                     <input type="text" class="form-control" placeholder="MX优先级" id="MX" aria-label="MX distance"
                            aria-describedby="basic-addon2">
+                </div>
+                <div class="input-group mb-3" id="userText" hidden="hidden">
+                    <select class="form-select" id="selectUser">
+                        <option value="" selected>选择用户</option>
+                        {% for k, v in user_dict.items() %}
+                            <option value="{{ v[0] }}">{{ v[1] }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" id="submitModifyRecord">修改</button>
+                <button type="button" class="btn btn-primary" id="submitDeliverDomain" hidden="hidden">提交</button>
             </div>
         </div>
     </div>
@@ -218,7 +303,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteRecord">删除记录</h5>
+                <h5 class="modal-title" id="deleteRecordTitle">删除记录</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -229,7 +314,7 @@
                 <div class="input-group mb-3" hidden="hidden">
                     <input type="text" class="form-control" id="host" aria-label="Host" aria-describedby="basic-addon2">
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="selectHostText">
                     <select class="form-select" id="selectHost">
                         <option selected>选择记录</option>
                         {% for k, v in data_dict.items() %}
@@ -237,38 +322,47 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="userText" hidden="hidden">
+                    <select class="form-select" id="selectUser">
+                        <option value="" selected>选择用户</option>
+                        {% for k, v in user_dict.items() %}
+                            <option value="{{ v[0] }}">{{ v[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="input-group mb-3" id="typeText">
                     <input type="text" class="form-control" id="inputGroupSelect01" value="" aria-label="Record Type"
                            aria-describedby="basic-addon2" readonly>
+                </div>
+                <div class="input-group mb-3" id="statusText" hidden="hidden">
+                    <select class="form-select" id="selectStatus">
+                        <option value="" selected>选择状态</option>
+                        <option value="enable">启用</option>
+                        <option value="disable">禁用</option>
+                    </select>
                 </div>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" id="submitDeleteRecord">删除</button>
+                <button type="button" class="btn btn-primary" id="submitModifyUser" hidden="hidden">提交</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container" id="userPage" hidden="hidden">
-    <p>hello world</p>
-</div>
 
-<div class="container" id="settingPage" hidden="hidden">
-    <p>hello world--setting</p>
-</div>
-
-    <div class="position-fixed bottom-0 end-0 p-3">
-        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto" id="toastTitle"></strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" id="toastBody">
-            </div>
+<div class="position-fixed bottom-0 end-0 p-3">
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastBody">
         </div>
     </div>
+</div>
 
 </body>
 <script>

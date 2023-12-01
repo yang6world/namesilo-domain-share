@@ -60,18 +60,25 @@ class Config:
         except IOError:
             logging.error('创建配置文件失败')
 
-    def modify_config(self, key, value):
+    def modify_config(self, data_dict):
         try:
-
             with open(self.file_path) as f:
                 config_temp = yaml.safe_load(f)
-                config_temp[key] = value
+                for key, value in data_dict.items():
+                    config_temp[key] = value
             with open(self.file_path, 'w') as f:
                 yaml.dump(config_temp, f)
                 logging.info('修改配置文件成功')
         except FileNotFoundError:
             logging.error('修改配置文件失败')
 
+    def get_all_setting(self):
+        try:
+            with open(self.file_path) as f:
+                config_temp = yaml.safe_load(f)
+                return config_temp
+        except FileNotFoundError:
+            logging.error('获取配置文件失败')
     def init_oidc_json(self):
         oidc_json = {
             "web": {
@@ -99,5 +106,6 @@ class Config:
 
 if __name__ == '__main__':
     config = Config()
-    logging.info(config.namesilo_api_key)
-    config.init_oidc_json()
+    #logging.info(config.namesilo_api_key)
+    #config.init_oidc_json()
+    config.get_all_setting()
