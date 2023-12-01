@@ -15,6 +15,7 @@
     <script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/regularmatch.js') }}"></script>
     <style>
         /* Custom styles */
 
@@ -36,7 +37,7 @@
 <nav class="navbar navbar-light mb-3" style="background-color: #e3f2fd;">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <img src="https://blog.yserver.top/wp-content/uploads/2023/11/yserver-1.png" width="35" height="35"
+            <img src="{{ url_for('static', filename='img/yserver.png') }}" width="35" height="35"
                  class="d-inline-block align-top" alt="">
             域名管理
         </a>
