@@ -130,11 +130,20 @@ class Admin(User):
             return status
 
     def change_user_status(self):
+        if self.data['user'] == config.admin_name:
+            logging.info('不能修改管理员状态')
+            return '400'
+        if self.data['userStatus'] != 'enable' and self.data['userStatus'] != 'disable':
+            logging.info('参数错误')
+            return '400'
         db.change_user_status(self.data['user'], self.data['userStatus'])
         logging.info('修改成功')
         return '200'
 
     def set_record_owner(self):
+        if self.data['user'] not in db.get_user():
+            logging.info('用户不存在')
+            return '400'
         db.set_record_owner(self.record_id, self.data['user'])
         logging.info('修改成功')
         return '200'

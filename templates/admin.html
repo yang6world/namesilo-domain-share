@@ -203,7 +203,7 @@
                     <input type="text" class="form-control" placeholder="主机记录" id="host" aria-label="RecordHost"
                            aria-describedby="basic-addon2">
                     <select class="form-select" id="domain">
-                        <option value="" selected>选择域名</option>
+                        <option selected>选择域名</option>
                         {% for i, domain in domain_list.items() %}
                             <option value="{{ domain }}">{{ domain }}</option>
                         {% endfor %}
@@ -211,7 +211,7 @@
                 </div>
                 <div class="input-group mb-3">
                     <select class="form-select" id="inputGroupSelect01">
-                        <option value="" selected>选择类型</option>
+                        <option selected>选择类型</option>
                         <option value="A">A</option>
                         <option value="CNAME">CNAME</option>
                         <option value="MX">MX</option>
