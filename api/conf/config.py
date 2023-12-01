@@ -9,7 +9,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # 读取配置文件
 class Config:
     def __init__(self):
-        self.file_path = os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data'), 'config.yaml')
+        self.file_path = os.path.join(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data'),
+                                      'config.yaml')
         if not os.path.exists(self.file_path):
             self.creat_base_config()
             logging.info('请修改配置文件后重新运行')
@@ -65,7 +66,8 @@ class Config:
             with open(self.file_path) as f:
                 config_temp = yaml.safe_load(f)
                 for key, value in data_dict.items():
-                    config_temp[key] = value
+                    if key is not None and value is not None and key != 'action':
+                        config_temp[key] = value
             with open(self.file_path, 'w') as f:
                 yaml.dump(config_temp, f)
                 logging.info('修改配置文件成功')
@@ -79,6 +81,7 @@ class Config:
                 return config_temp
         except FileNotFoundError:
             logging.error('获取配置文件失败')
+
     def init_oidc_json(self):
         oidc_json = {
             "web": {
@@ -106,6 +109,6 @@ class Config:
 
 if __name__ == '__main__':
     config = Config()
-    #logging.info(config.namesilo_api_key)
-    #config.init_oidc_json()
+    # logging.info(config.namesilo_api_key)
+    # config.init_oidc_json()
     config.get_all_setting()

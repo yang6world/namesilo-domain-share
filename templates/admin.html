@@ -131,6 +131,7 @@
         </table>
     </div>
     <form id="setting" hidden="hidden">
+    <label for="setting" class="form-label mb-3"><b>基本设置</b></label>
         <div class="mb-3">
             <label for="adminUser" class="form-label">管理员用户</label>
             <input type="text" class="form-control" id="adminUser" readonly value="{{ setting['admin_name'] }}">
@@ -139,11 +140,14 @@
             <label for="namesilo_api_key" class="form-label">NamesiloApi</label>
             <input type="text" class="form-control" id="namesilo_api_key" value="{{ setting['namesilo_api_key'] }}">
         </div>
-        <label for="oAuth2" class="form-label">oAuth2.0设置</label>
+        <label for="oAuth2" class="form-label"><b>OAuth2.0设置</b></label>
         <div class="mb-3" id="oAuth2">
-            <label for="client_id" class="form-label">NamesiloApi</label>
+            <label for="client_id" class="form-label">client_id</label>
             <input type="text" class="form-control" id="client_id" value="{{ setting['client_id'] }}">
         </div>
+        <div class="mb-3">
+            <label for="client_secret" class="form-label">client_secret</label>
+            <input type="text" class="form-control" id="client_secret" value="{{ setting['client_secret'] }}">
         <div class="mb-3">
             <label for="auth_url" class="form-label">auth_url</label>
             <input type="text" class="form-control" id="auth_url" value="{{ setting['auth_url'] }}">
@@ -158,10 +162,6 @@
         </div>
         <div class="mb-3">
             <label for="issuer" class="form-label">issuer</label>
-            <input type="text" class="form-control" id="issuer" value="{{ setting['issuer'] }}">
-        </div>
-        <div class="mb-3">
-            <label for="issuer" class="form-label">NamesiloApi</label>
             <input type="text" class="form-control" id="issuer" value="{{ setting['issuer'] }}">
         </div>
         <div class="mb-3">
