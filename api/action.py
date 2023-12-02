@@ -24,6 +24,14 @@ def check_repeat_domain(host, record_type):
     return True
 
 
+def check_record_exist(record_id, username):
+    if username == config.admin_name:
+        return True
+    if db.get_record_by_id(record_id, username):
+        return True
+    else:
+        return False
+
 
 class User:
     def __init__(self, username, data):
@@ -68,6 +76,8 @@ class User:
             return status
 
     def modify_record(self):
+        if not check_record_exist(self.record_id, self.username):
+            return '400'
         xml_s = api.update_dns_record(self.domain, self.data['host'], self.record_id, self.data['type'],
                                       self.data['value'], self.data['ttl'], self.data['mx'])
         status = xml.get_modify_status_xml(xml_s)
@@ -82,6 +92,8 @@ class User:
             return status
 
     def delete_record(self):
+        if not check_record_exist(self.record_id, self.username):
+            return '400'
         status = xml.get_modify_status_xml(api.delete_dns_record(self.domain, self.record_id))
         if status == '300':
             db.delete_domain_record(self.record_id)

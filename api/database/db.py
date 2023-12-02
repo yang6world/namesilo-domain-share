@@ -211,6 +211,14 @@ class Database:
         self.conn.execute(sql, (id, add_user, record_id))
         self.conn.commit()
 
+    def get_record_by_id(self, record_id, username):
+        sql = '''
+        SELECT host FROM record WHERE record_id = ? AND id = ?
+        '''
+        cursor = self.conn.execute(sql, (record_id, username))
+        record_list = cursor.fetchone()
+        return record_list
+
     # 删除用户-域名关系并清除记录
     def delete_domain_record(self, record_id):
         sql = '''
@@ -245,5 +253,5 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    db.set_record_owner('e3c1482d5ead908bd6155a143fc0ab33', 'yzr')
+    #db.set_record_owner('e3c1482d5ead908bd6155a143fc0ab33', 'yzr')
     # print(db.get_domain_id('blog.yserver.top', 'A'))
