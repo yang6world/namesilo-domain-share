@@ -40,8 +40,6 @@ CORS(app, resources=r'/*')
 @oidc.require_login
 def login():
     username = session['oidc_auth_profile']['email'].split('@')[0]
-    if username in db.get_disabled_user():
-        return "您的账户已被禁用，请联系管理员"
     if username not in db.get_user():
         if username == config.admin_name:
             db.add_user(username, session['oidc_auth_profile']['name'],
@@ -62,6 +60,9 @@ def login():
 def manage():  # put application's code here
     if not oidc.user_loggedin:
         return redirect(url_for('login'))
+    username = session['oidc_auth_profile']['email'].split('@')[0]
+    if username in db.get_disabled_user():
+        return "您的账户已被禁用，请联系管理员"
     if request.method == 'POST':
         data = json.loads(request.form.get('data'))
         action = User(session['oidc_auth_profile']['email'].split('@')[0], data)
