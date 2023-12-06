@@ -71,8 +71,8 @@ def manage():  # put application's code here
         info['status'] = status
         return jsonify(info)
     else:
-        return render_template('manage.html', data_dict=db.get_record(session['oidc_auth_profile']['name']),
-                               domain_list=db.get_domain(), user=session['oidc_auth_profile']['email'].split('@')[0])
+        return render_template('manage.html', data_dict=db.get_record(username),
+                               domain_list=db.get_domain(), user=username)
 
 
 @app.route('/admin', methods=["GET", "POST"])
