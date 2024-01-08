@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>域名管理</title>
     <meta charset="UTF-8"/>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.2/css/all.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/regularmatch.js') }}"></script>
     <style>
@@ -148,6 +148,7 @@
         <div class="mb-3">
             <label for="client_secret" class="form-label">client_secret</label>
             <input type="text" class="form-control" id="client_secret" value="{{ setting['client_secret'] }}">
+        </div>
         <div class="mb-3">
             <label for="auth_url" class="form-label">auth_url</label>
             <input type="text" class="form-control" id="auth_url" value="{{ setting['auth_url'] }}">
@@ -178,7 +179,7 @@
         </div>
         <button type="button" id="saveSetting" class="btn btn-primary">保存</button>
         <button type="button" id="syncData" class="btn btn-primary">同步官网数据</button>
-    </form>
+        </form>
     {% if status == "error" %}
         <div class="alert alert-danger" role="alert">
             操作失败！
