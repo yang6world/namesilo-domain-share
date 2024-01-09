@@ -13,7 +13,20 @@ import json
 from api.action import User, Admin
 from api.sync import sync_db_record
 
+
+class ReverseProxied(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        if 'HTTP_X_FORWARDED_FOR' in environ:
+            # 使用 X-Forwarded-For 的第一个地址作为客户端地址
+            environ['REMOTE_ADDR'] = environ['HTTP_X_FORWARDED_FOR'].split(',')[0]
+        return self.app(environ, start_response)
+
+
 app = Flask(import_name=__name__, template_folder='templates', static_folder='static')
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 config = config.Config()
 db = Database()
 
